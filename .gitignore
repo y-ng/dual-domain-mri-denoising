@@ -1,0 +1,6 @@
+**/__pycache__/
+*.DS_store
+
+# files too large for tracking
+*.h5
+*.pkl
