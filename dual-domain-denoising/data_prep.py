@@ -39,6 +39,11 @@ def main():
         (n_slices, n_channels, height, width) = volume_kspace.shape
         print(n_slices, n_channels)
 
+        # sample every other k-space line in x-direction to go from rectangular to square k-space
+        # then crop centre to reduce resolution to 256x256
+        volume_kspace = volume_kspace[:, :, 1::2, :]
+        volume_kspace = transforms.center_crop(volume_kspace, shape=(256, 256))
+
         # assign empty arrays if first file
         if noisy_kdata is None:
             noisy_kdata = np.empty(shape=(0, height, width))

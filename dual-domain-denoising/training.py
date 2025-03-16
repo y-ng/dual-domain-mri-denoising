@@ -10,6 +10,7 @@ from constants import *
 from models import UNet_kdata, UNet_image
 
 np.random.seed(SEED)
+torch.manual_seed(SEED)
 
 # function to convert kspace to image space
 def kspace_to_image(kdata):
@@ -64,15 +65,14 @@ def main():
     )
     kdata_train_loader = DataLoader(kdata_train_data, batch_size=batch_size, shuffle=True)
 
-    num_iters = 1 # num_batches = num_iters * 5
+    num_iters = 1 # num_epochs = num_iters * 5 * 2
 
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
     u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-4)
     u_k_criterion = nn.HuberLoss()
     u_i_criterion = nn.HuberLoss()
 
-    # train models
-    # TODO
+    # TODO: train model
     for iter in range(num_iters):
         print(f'Iteration {iter + 1}/{num_iters}')
         
@@ -104,9 +104,8 @@ def main():
     u_i_net_load = UNet_image()
     u_i_net_load.load_state_dict(torch.load(U_I_MODEL_PATH, weights_only=True))
     u_i_net_load.eval()
-
-    print('Done.')"
     """
+    print('Done.')
 
 
 if __name__ == '__main__':
