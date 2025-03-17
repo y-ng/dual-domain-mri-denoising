@@ -1,3 +1,4 @@
+import os
 import h5py
 import numpy as np
 import pickle as pk
@@ -5,32 +6,19 @@ import matplotlib.pyplot as plt
 import fastmri
 from fastmri.data import transforms
 from constants import *
+from helpers import crop_kspace, show_coils, kspace_to_image
 
 np.random.seed(SEED)
-
-# function to plot absolute value of kspace
-def show_coils(data, slice_nums, cmap=None):
-    plt.figure()
-    for i, num in enumerate(slice_nums):
-        plt.subplot(1, len(slice_nums), i+1)
-        plt.imshow(data[num], cmap=cmap)
-    plt.tight_layout()
-    plt.show()
-
 
 def main():
     
     noisy_kdata, clean_kdata = None, None
     noisy_image, clean_image = None, None
     
-    files = [
-        './data/file_brain_AXT1_201_6002717.h5',
-    ]
-    
-    for i, file in enumerate(files):
-        print(f'Processing file {i + 1} / {len(files)}...')
+    for i, file in enumerate(FILES_TRAIN):
+        print(f'Processing file {i + 1} / {len(FILES_TRAIN)}...')
         # load h5 file
-        hf = h5py.File(file)
+        hf = h5py.File(os.path.join(DATA_FOLDER, file))
 
         # select kspace key 
         volume_kspace = hf['kspace'][()]
@@ -38,10 +26,7 @@ def main():
         (n_slices, n_channels, height, width) = volume_kspace.shape
         print(n_slices, n_channels)
 
-        # sample every other k-space line in x-direction to go from rectangular to square k-space
-        # then crop centre to reduce resolution to CROP_SIZE x CROP_SIZE
-        volume_kspace = volume_kspace[:, :, 1::2, :]
-        volume_kspace = transforms.center_crop(volume_kspace, shape=(CROP_SIZE, CROP_SIZE))
+        volume_kspace = crop_kspace(volume_kspace, CROP_SIZE)
 
         # assign empty arrays if first file
         if noisy_kdata is None:
@@ -68,18 +53,10 @@ def main():
             show_coils(np.log(np.abs(clean_kspace) + 1e-9), [0, 1, 2, 3])
             show_coils(np.log(np.abs(noisy_kspace) + 1e-9), [0, 1, 2, 3])
             """
-            
-            # np array to pytorch tensor
-            clean_kspace_tensor = transforms.to_tensor(clean_kspace)
-            noisy_kspace_tensor = transforms.to_tensor(noisy_kspace)
 
-            # inverse fourier to get complex img 
-            clean_image_data = fastmri.ifft2c(clean_kspace_tensor)
-            noisy_image_data = fastmri.ifft2c(noisy_kspace_tensor)
-
-            # absolute value of img
-            clean_image_abs = fastmri.complex_abs(clean_image_data)
-            noisy_image_abs = fastmri.complex_abs(noisy_image_data)
+            # absolute value of img from kspace 
+            clean_image_abs = kspace_to_image(clean_kspace)
+            noisy_image_abs = kspace_to_image(noisy_kspace)
 
             """
             show_coils(clean_image_abs, [0, 1, 2, 3], cmap='gray')

@@ -8,20 +8,10 @@ import fastmri
 from fastmri.data import transforms
 from constants import *
 from models import UNet_kdata, UNet_image
+from helpers import kspace_to_image
 
 np.random.seed(SEED)
 torch.manual_seed(SEED)
-
-# function to convert kspace to image space
-def kspace_to_image(kdata):
-    kspace_tensor = transforms.to_tensor(kdata)
-    # inverse fourier to get complex img 
-    image_data = fastmri.ifft2c(kspace_tensor)
-    # absolute value of img
-    image_abs = fastmri.complex_abs(image_data)
-
-    return image_abs
-
 
 def main():
     # load pkl data
@@ -30,18 +20,13 @@ def main():
         noisy_kdata = pk.load(handle)
         print(noisy_kdata.dtype, noisy_kdata.shape)
 
-    with open(CLEAN_KDATA_PATH, 'rb') as handle:
-        clean_kdata = pk.load(handle)
-        print(clean_kdata.dtype, clean_kdata.shape)
-
     noisy_kdata_real = torch.tensor(noisy_kdata).real
     noisy_kdata_imag = torch.tensor(noisy_kdata).imag
 
-    clean_kdata_real = torch.tensor(clean_kdata).real
-    clean_kdata_imag = torch.tensor(clean_kdata).imag
+    kdata_test_data = torch.stack([noisy_kdata_real.to(torch.float32), noisy_kdata_imag.to(torch.float32)], dim=1)
     
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    print(device)
+    print(f'Device: {device}')
 
     # load saved pytorch models for inference
     print('Loading models...')

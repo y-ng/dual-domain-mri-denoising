@@ -8,20 +8,10 @@ import fastmri
 from fastmri.data import transforms
 from constants import *
 from models import UNet_kdata, UNet_image
+from helpers import kspace_to_image
 
 np.random.seed(SEED)
 torch.manual_seed(SEED)
-
-# function to convert kspace to image space
-def kspace_to_image(kdata):
-    kspace_tensor = transforms.to_tensor(kdata)
-    # inverse fourier to get complex img 
-    image_data = fastmri.ifft2c(kspace_tensor)
-    # absolute value of img
-    image_abs = fastmri.complex_abs(image_data)
-
-    return image_abs
-
 
 def main():
     # load pkl data
@@ -46,10 +36,11 @@ def main():
 
     (n_samples, height, width) = noisy_kdata.shape
     print(f'Number of training samples: {n_samples}')
+    print(f'Image size: {height}x{width}')
 
     # set up model
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    print(device)
+    print(f'Device: {device}')
 
     u_k_net = UNet_kdata()
     u_i_net = UNet_image()
@@ -102,18 +93,6 @@ def main():
     torch.save(u_k_net.state_dict(), U_K_MODEL_PATH)
     torch.save(u_i_net.state_dict(), U_I_MODEL_PATH)
     
-
-    """
-    # load saved pytorch models for inference
-    print('Loading models...')
-    u_k_net_load = UNet_kdata()
-    u_k_net_load.load_state_dict(torch.load(U_K_MODEL_PATH, weights_only=True))
-    u_k_net_load.eval()
-
-    u_i_net_load = UNet_image()
-    u_i_net_load.load_state_dict(torch.load(U_I_MODEL_PATH, weights_only=True))
-    u_i_net_load.eval()
-    """
     print('Done.')
 
 
