@@ -40,16 +40,21 @@ def main():
     clean_kdata_real = torch.tensor(clean_kdata).real
     clean_kdata_imag = torch.tensor(clean_kdata).imag
     
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(device)
+
     # load saved pytorch models for inference
     print('Loading models...')
     u_k_net_load = UNet_kdata()
     u_k_net_load.load_state_dict(torch.load(U_K_MODEL_PATH, weights_only=True))
+    u_k_net_load.to(device)
     u_k_net_load.eval()
     with torch.no_grad():
         predicted_image = u_k_net_load(noisy_kdata)
 
     u_i_net_load = UNet_image()
     u_i_net_load.load_state_dict(torch.load(U_I_MODEL_PATH, weights_only=True))
+    u_i_net_load.to(device)
     u_i_net_load.eval()
 
     # TODO: run inference on test data

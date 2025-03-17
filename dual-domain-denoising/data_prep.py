@@ -24,8 +24,7 @@ def main():
     noisy_image, clean_image = None, None
     
     files = [
-        './file_brain_AXT2_202_2020179.h5',
-        './file_brain_AXT2_207_2070513.h5',
+        './data/file_brain_AXT1_201_6002717.h5',
     ]
     
     for i, file in enumerate(files):
@@ -40,16 +39,16 @@ def main():
         print(n_slices, n_channels)
 
         # sample every other k-space line in x-direction to go from rectangular to square k-space
-        # then crop centre to reduce resolution to 256x256
+        # then crop centre to reduce resolution to CROP_SIZE x CROP_SIZE
         volume_kspace = volume_kspace[:, :, 1::2, :]
-        volume_kspace = transforms.center_crop(volume_kspace, shape=(256, 256))
+        volume_kspace = transforms.center_crop(volume_kspace, shape=(CROP_SIZE, CROP_SIZE))
 
         # assign empty arrays if first file
         if noisy_kdata is None:
-            noisy_kdata = np.empty(shape=(0, height, width))
-            clean_kdata = np.empty(shape=(0, height, width))
-            noisy_image = np.empty(shape=(0, height, width))
-            clean_image = np.empty(shape=(0, height, width))
+            noisy_kdata = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
+            clean_kdata = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
+            noisy_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
+            clean_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
 
         # select each slice in a volume
         for n_slice in range(n_slices):
@@ -59,7 +58,7 @@ def main():
             noisy_kspace = clean_kspace.copy()
             for n_channel in range(n_channels):
                 noise_level = np.random.choice(NOISE_LEVELS)
-                noisy_kspace[n_channel] += np.random.normal(0, noise_level, size=(height, width)) + 1j * np.random.normal(0, noise_level, size=(height, width))
+                noisy_kspace[n_channel] += np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE)) + 1j * np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE))
 
             # track kspace data for training
             noisy_kdata = np.concatenate((noisy_kdata, noisy_kspace), axis=0)
@@ -97,8 +96,8 @@ def main():
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
             
             fig, axs = plt.subplots(1, 2)
-            axs[0].imshow(np.abs(clean_image_rss.numpy())[250:350, 75:175], cmap='gray')
-            axs[1].imshow(np.abs(noisy_image_rss.numpy())[250:350, 75:175], cmap='gray')
+            axs[0].imshow(np.abs(clean_image_rss.numpy()), cmap='gray')
+            axs[1].imshow(np.abs(noisy_image_rss.numpy()), cmap='gray')
             plt.tight_layout()
             plt.show()
             """

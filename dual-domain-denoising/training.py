@@ -48,8 +48,14 @@ def main():
     print(f'Number of training samples: {n_samples}')
 
     # set up model
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(device)
+
     u_k_net = UNet_kdata()
     u_i_net = UNet_image()
+
+    u_k_net.to(device)
+    u_i_net.to(device)
 
     batch_size = 4
 
@@ -78,7 +84,8 @@ def main():
         
         for i in range(5):
             print(f'Epoch {(i + 1) * (iter + 1)}/{num_iters * 5} for U_k')
-            for noisy, clean in kdata_train_loader:
+            for data in kdata_train_loader:
+                noisy, clean = data[0].to(device), data[1].to(device)
                 u_k_net_outputs = u_k_net(noisy)
                 u_k_net_loss = u_k_criterion(u_k_net_outputs, clean)
 
@@ -90,6 +97,8 @@ def main():
 
     # save final models
     print('Saving models and training outputs...')
+    u_k_net.to('cpu')
+    u_i_net.to('cpu')
     torch.save(u_k_net.state_dict(), U_K_MODEL_PATH)
     torch.save(u_i_net.state_dict(), U_I_MODEL_PATH)
     

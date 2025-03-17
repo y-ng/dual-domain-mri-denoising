@@ -17,4 +17,7 @@ MODEL_LOSS_PATH = OUTPUT_FOLDER + '/model_loss.pkl'
 SEED = 42
 
 # noise levels for additive kspace noise
-NOISE_LEVELS = [1e-5, 5e-5, 1e-4]
+NOISE_LEVELS = [5e-6, 6e-6, 7e-6, 8e-6, 9e-6, 1e-5, 2e-5, 3e-5]
+
+# input image size
+CROP_SIZE = 256
