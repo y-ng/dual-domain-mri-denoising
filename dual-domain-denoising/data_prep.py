@@ -2,11 +2,10 @@ import os
 import h5py
 import numpy as np
 import pickle as pk
-import matplotlib.pyplot as plt
 import fastmri
 from fastmri.data import transforms
 from constants import *
-from helpers import crop_kspace, show_coils, kspace_to_image
+from helpers import crop_kspace, show_coils, kspace_to_image, plot_noisy_vs_clean
 
 np.random.seed(SEED)
 
@@ -69,14 +68,9 @@ def main():
             
             """
             # combine multicoil data with root-sum-of-squares recon
-            clean_image_rss = fastmri.rss(clean_image_abs, dim=0)
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
-            
-            fig, axs = plt.subplots(1, 2)
-            axs[0].imshow(np.abs(clean_image_rss.numpy()), cmap='gray')
-            axs[1].imshow(np.abs(noisy_image_rss.numpy()), cmap='gray')
-            plt.tight_layout()
-            plt.show()
+            clean_image_rss = fastmri.rss(clean_image_abs, dim=0)
+            plot_noisy_vs_clean(noisy_image_rss, clean_image_rss)
             """
 
     # writing all training data to pkl 

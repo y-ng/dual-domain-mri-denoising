@@ -18,13 +18,18 @@ def crop_kspace(volume_kspace, size):
 
 
 # function to plot absolute value of kspace
-def show_coils(data, slice_nums, cmap=None):
-    plt.figure()
+def show_coils(data, slice_nums, cmap=None, path=None):
+    fig = plt.figure()
     for i, num in enumerate(slice_nums):
         plt.subplot(1, len(slice_nums), i+1)
         plt.imshow(data[num], cmap=cmap)
     plt.tight_layout()
-    plt.show()
+
+    if path:
+        fig.savefig(path)
+        plt.close()
+    else:
+        plt.show()
 
 
 # function to convert kspace to image space
@@ -37,3 +42,18 @@ def kspace_to_image(kdata):
     image_abs = fastmri.complex_abs(image_data)
 
     return image_abs
+
+
+# function to compare clean vs noisy reconstructed images
+def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
+    fig, axs = plt.subplots(1, 2)
+    axs[0].imshow(np.abs(clean_image.numpy()), cmap='gray')
+    axs[1].imshow(np.abs(noisy_image.numpy()), cmap='gray')
+    plt.tight_layout()
+
+    if path:
+        fig.savefig(path)
+        plt.close()
+    else:
+        plt.show()
+

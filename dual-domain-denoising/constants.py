@@ -1,24 +1,27 @@
+import os
+import numpy as np 
+
 # path for input and output data
 TRAIN_FOLDER = './dual-domain-denoising/training_data'
 OUTPUT_FOLDER = './dual-domain-denoising/outputs'
 DATA_FOLDER = './data'
 
 # paths for noisy/clean kspace/image data
-NOISY_KDATA_PATH = TRAIN_FOLDER + '/noisy_train_kdata.pkl'
-CLEAN_KDATA_PATH = TRAIN_FOLDER + '/clean_train_kdata.pkl'
-NOISY_IMAGE_PATH = TRAIN_FOLDER + '/noisy_train_image.pkl'
-CLEAN_IMAGE_PATH = TRAIN_FOLDER + '/clean_train_image.pkl'
+NOISY_KDATA_PATH = os.path.join(TRAIN_FOLDER, 'noisy_train_kdata.pkl')
+CLEAN_KDATA_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_kdata.pkl')
+NOISY_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'noisy_train_image.pkl')
+CLEAN_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_image.pkl')
 
 # path for model outputs
-U_K_MODEL_PATH = OUTPUT_FOLDER + '/u_k_net.pt'
-U_I_MODEL_PATH = OUTPUT_FOLDER + '/u_i_net.pt'
-MODEL_LOSS_PATH = OUTPUT_FOLDER + '/model_loss.pkl'
+U_K_MODEL_PATH = os.path.join(OUTPUT_FOLDER, 'u_k_net.pt')
+U_I_MODEL_PATH = os.path.join(OUTPUT_FOLDER, 'u_i_net.pt')
+MODEL_LOSS_PATH = os.path.join(OUTPUT_FOLDER, 'model_loss.pkl')
 
 # seed for random state
 SEED = 42
 
 # noise levels for additive kspace noise
-NOISE_LEVELS = [5e-6, 6e-6, 7e-6, 8e-6, 9e-6, 1e-5, 2e-5, 3e-5]
+NOISE_LEVELS = np.linspace(1e-5, 5e-5, 9)
 
 # input image size
 CROP_SIZE = 256
@@ -52,10 +55,16 @@ FILES_VAL = [
 
 FILES_TEST = [
     'file_brain_AXT1_202_6000305.h5',
-    'file_brain_AXT1_202_6000312.h5',
-    'file_brain_AXT1_202_6000339.h5',
-    'file_brain_AXT1_202_6000347.h5',
-    'file_brain_AXT1_202_6000382.h5',
+    #'file_brain_AXT1_202_6000312.h5',
+    #'file_brain_AXT1_202_6000339.h5',
+    #'file_brain_AXT1_202_6000347.h5',
+    #'file_brain_AXT1_202_6000382.h5',
 ]
 
-FILES_TEST_T2 = []
+FILES_TEST_T2 = [
+    'file_brain_AXT2_200_200020.h5',
+    'file_brain_AXT2_200_200057.h5',
+    'file_brain_AXT2_200_200080.h5',
+    'file_brain_AXT2_200_200092.h5',
+    'file_brain_AXT2_200_200175.h5',
+]
