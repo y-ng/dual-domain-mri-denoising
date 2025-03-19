@@ -1,10 +1,8 @@
 import os
 import h5py
 import numpy as np
-import pickle as pk
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
 import fastmri
 from fastmri.data import transforms
 from pathlib import Path
@@ -65,10 +63,8 @@ def main():
 
             # TODO: run inference for image module
             u_i_net_out = u_i_net_in
-            """
             with torch.no_grad():
                 u_i_net_out = u_i_net_load(u_i_net_in)
-            """
 
             # combine multicoil data with root-sum-of-squares recon
             clean_image_rss = torch.reshape(fastmri.rss(u_i_net_out, dim=0), shape=(CROP_SIZE, CROP_SIZE))

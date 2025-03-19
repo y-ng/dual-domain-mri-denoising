@@ -12,6 +12,9 @@ CLEAN_KDATA_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_kdata.pkl')
 NOISY_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'noisy_train_image.pkl')
 CLEAN_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_image.pkl')
 
+NOISY_KDATA_VAL = os.path.join(TRAIN_FOLDER, 'noisy_val_kdata.pkl')
+CLEAN_KDATA_VAL = os.path.join(TRAIN_FOLDER, 'clean_val_kdata.pkl')
+
 # path for model outputs
 U_K_MODEL_PATH = os.path.join(OUTPUT_FOLDER, 'u_k_net.pt')
 U_I_MODEL_PATH = os.path.join(OUTPUT_FOLDER, 'u_i_net.pt')

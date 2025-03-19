@@ -1,5 +1,4 @@
 import numpy as np
-import pickle as pk
 import torch
 import torch.nn as nn
 from constants import *
@@ -92,6 +91,9 @@ class UNet_kdata(nn.Module):
         self.outrelu3 = nn.LeakyReLU(inplace=True)
         self.out4 = nn.Conv2d(32, 2, kernel_size=1)
 
+        # initialize weights w xavier uniform and biases with uniform
+        self.apply(self.init_weights)
+
 
     def forward(self, x):
         # encoder
@@ -175,6 +177,13 @@ class UNet_kdata(nn.Module):
         xout4 = self.out4(xoutrelu3)
 
         return xout4
+    
+
+    def init_weights(self, m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+            nn.init.xavier_normal_(m.weight)
+            if m.bias is not None:
+                nn.init.uniform_(m.bias)
 
 
 # Ui module in wNet
@@ -246,6 +255,9 @@ class UNet_image(nn.Module):
         self.outrelu2 = nn.ReLU(inplace=True)
         self.out4 = nn.Conv2d(32, 1, kernel_size=1)
 
+        # initialize weights
+        self.apply(self.init_weights)
+
 
     def forward(self, x):
         # encoder
@@ -313,6 +325,13 @@ class UNet_image(nn.Module):
         xout4 = self.out4(xoutrelu2)
 
         return xout4
+    
+
+    def init_weights(self, m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+            nn.init.xavier_normal_(m.weight)
+            if m.bias is not None:
+                nn.init.uniform_(m.bias)
     
 
 def main():

@@ -1,7 +1,7 @@
 import numpy as np
-import pickle as pk
 import matplotlib.pyplot as plt
 import fastmri
+from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 from fastmri.data import transforms
 from constants import *
 
@@ -56,4 +56,16 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
         plt.close()
     else:
         plt.show()
+
+
+# function to calculate structural similarity b/w two images
+def find_ssim(image, prediction):
+    metric = StructuralSimilarityIndexMeasure()
+    return metric(prediction, image)
+
+
+# function to calculate peak signal-to-noise ratio of an image
+def find_psnr(image, prediction):
+    metric = PeakSignalNoiseRatio()
+    return metric(prediction, image)
 
