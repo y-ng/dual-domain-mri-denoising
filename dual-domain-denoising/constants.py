@@ -32,20 +32,20 @@ CROP_SIZE = 256
 # files names for train/val/test
 FILES_TRAIN = [
     'file_brain_AXT1_201_6002717.h5',
-    #'file_brain_AXT1_201_6002779.h5',
-    #'file_brain_AXT1_201_6002836.h5',
-    #'file_brain_AXT1_202_2020098.h5',
-    #'file_brain_AXT1_202_2020109.h5',
-    #'file_brain_AXT1_202_2020131.h5',
-    #'file_brain_AXT1_202_2020146.h5',
-    #'file_brain_AXT1_202_2020186.h5',
-    #'file_brain_AXT1_202_2020209.h5',
-    #'file_brain_AXT1_202_2020233.h5',
-    #'file_brain_AXT1_202_2020334.h5',
-    #'file_brain_AXT1_202_2020377.h5',
-    #'file_brain_AXT1_202_2020384.h5',
-    #'file_brain_AXT1_202_2020389.h5',
-    #'file_brain_AXT1_202_2020391.h5',
+    'file_brain_AXT1_201_6002779.h5',
+    'file_brain_AXT1_201_6002836.h5',
+    'file_brain_AXT1_202_2020098.h5',
+    'file_brain_AXT1_202_2020109.h5',
+    'file_brain_AXT1_202_2020131.h5',
+    'file_brain_AXT1_202_2020146.h5',
+    'file_brain_AXT1_202_2020186.h5',
+    'file_brain_AXT1_202_2020209.h5',
+    'file_brain_AXT1_202_2020233.h5',
+    'file_brain_AXT1_202_2020334.h5',
+    'file_brain_AXT1_202_2020377.h5',
+    'file_brain_AXT1_202_2020384.h5',
+    'file_brain_AXT1_202_2020389.h5',
+    'file_brain_AXT1_202_2020391.h5',
 ]
 
 FILES_VAL = [
@@ -58,10 +58,10 @@ FILES_VAL = [
 
 FILES_TEST = [
     'file_brain_AXT1_202_6000305.h5',
-    #'file_brain_AXT1_202_6000312.h5',
-    #'file_brain_AXT1_202_6000339.h5',
-    #'file_brain_AXT1_202_6000347.h5',
-    #'file_brain_AXT1_202_6000382.h5',
+    'file_brain_AXT1_202_6000312.h5',
+    'file_brain_AXT1_202_6000339.h5',
+    'file_brain_AXT1_202_6000347.h5',
+    'file_brain_AXT1_202_6000382.h5',
 ]
 
 FILES_TEST_T2 = [

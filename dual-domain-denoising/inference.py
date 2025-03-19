@@ -29,7 +29,7 @@ def main():
     u_i_net_load.to(device)
     u_i_net_load.eval()
 
-    # TODO: run inference on test data
+    # run inference on test data
     for i, file in enumerate(FILES_TEST):
         print(f'Running inference on {file} ({i + 1}/{len(FILES_TEST)})...')
 
@@ -61,7 +61,14 @@ def main():
             complex_output = u_k_net_out[:, 0, :, :] + 1j * u_k_net_out[:, 1, :, :]
             u_i_net_in = torch.reshape(kspace_to_image(complex_output), (n_channels, 1, CROP_SIZE, CROP_SIZE))
 
-            # TODO: run inference for image module
+            """
+            if n_slice == 0:
+                show_coils(np.log(np.abs(kspace) + 1e-9), [0, 1, 2, 3])
+                show_coils(np.log(np.abs(complex_output) + 1e-9), [0, 1, 2, 3])
+                show_coils(kspace_to_image(complex_output), [0, 1, 2, 3], cmap='gray')
+            """
+
+            # run inference for image module
             u_i_net_out = u_i_net_in
             with torch.no_grad():
                 u_i_net_out = u_i_net_load(u_i_net_in)

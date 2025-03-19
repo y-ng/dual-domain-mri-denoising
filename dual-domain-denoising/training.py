@@ -24,19 +24,19 @@ def main():
         print(clean_kdata.dtype, clean_kdata.shape)
 
     with open(NOISY_KDATA_VAL, 'rb') as handle:
-        noisy_val = pk.load(handle)[10:12]
-        print(noisy_val.dtype, noisy_val.shape)
+        noisy_kdata_val = pk.load(handle)[10:12]
+        print(noisy_kdata_val.dtype, noisy_kdata_val.shape)
 
     with open(CLEAN_KDATA_VAL, 'rb') as handle:
-        clean_val = pk.load(handle)[10:12]
-        print(clean_val.dtype, clean_val.shape)
+        clean_kdata_val = pk.load(handle)[10:12]
+        print(clean_kdata_val.dtype, clean_kdata_val.shape)
         
 
     (n_samples, height, width) = noisy_kdata.shape
     print(f'Number of training samples: {n_samples}')
     print(f'Image size: {height}x{width}')
 
-    (n_samples_val, height_val, width_val) = noisy_val.shape
+    (n_samples_val, height_val, width_val) = noisy_kdata_val.shape
     print(f'Number of validation samples: {n_samples_val}')
     print(f'Image size: {height_val}x{width_val}')
 
@@ -66,11 +66,11 @@ def main():
     kdata_train_loader = DataLoader(kdata_train_data, batch_size=batch_size, shuffle=True)
 
     # format val data
-    noisy_val_real = torch.tensor(noisy_val).real
-    noisy_val_imag = torch.tensor(noisy_val).imag
+    noisy_val_real = torch.tensor(noisy_kdata_val).real
+    noisy_val_imag = torch.tensor(noisy_kdata_val).imag
 
-    clean_val_real = torch.tensor(clean_val).real
-    clean_val_imag = torch.tensor(clean_val).imag
+    clean_val_real = torch.tensor(clean_kdata_val).real
+    clean_val_imag = torch.tensor(clean_kdata_val).imag
     
     kdata_val_data = TensorDataset(
         torch.stack([noisy_val_real.to(torch.float32), noisy_val_imag.to(torch.float32)], dim=1), 
@@ -90,10 +90,11 @@ def main():
     u_i_epoch_loss, u_i_step_loss = [], []
     u_i_val_loss, u_i_val_ssim, u_i_val_psnr = [], [], []
 
-    # TODO: train model
+    # train model (5 epochs for u_k + 5 epochs for u_i / iter)
     for iter in range(num_iters):
         print(f'Iteration {iter + 1}/{num_iters}')
         
+        # training for u_k_net
         for i in range(5):
             print(f'Epoch {(i + 1) * (iter + 1)}/{num_iters * 5} for U_k')
             u_k_net.train()
@@ -120,7 +121,7 @@ def main():
             print(f'----- train loss: {epoch_loss}')
             u_k_epoch_loss.append(epoch_loss)
 
-            # TODO: validation
+            # run validation
             u_k_net.eval()
             val_loss = 0
             with torch.no_grad():
@@ -134,6 +135,7 @@ def main():
             u_k_val_loss.append(val_loss)
         
         
+        # training for u_i_net
         for i in range(5):
             print(f'Epoch {(i + 1) * (iter + 1)}/{num_iters * 5} for U_i')
             u_i_net.train()
@@ -159,9 +161,6 @@ def main():
                 u_i_net_outputs = u_i_net(noisy_image)
                 u_i_net_loss = u_i_criterion(u_i_net_outputs, clean_image)
 
-                #clean_image_rss = torch.reshape(clean_image[0], shape=(CROP_SIZE, CROP_SIZE))
-                #plot_noisy_vs_clean(clean_image_rss, clean_image_rss)
-
                 # update weights
                 u_i_optimizer.zero_grad()
                 u_i_net_loss.backward()
@@ -174,7 +173,7 @@ def main():
             print(f'----- train loss: {epoch_loss}')
             u_i_epoch_loss.append(epoch_loss)
 
-            # TODO: validation
+            # run validation
             u_i_net.eval()
             val_loss, val_ssim, val_psnr = 0, 0, 0
             with torch.no_grad():
@@ -187,10 +186,12 @@ def main():
                     val_clean_complex = clean_val[:, 0, :, :] + 1j * clean_val[:, 1, :, :]
                     val_clean_image = torch.reshape(kspace_to_image(val_clean_complex), (val_clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
                 
+                    #plot_noisy_vs_clean(torch.reshape(val_noisy_image, (CROP_SIZE, CROP_SIZE)), torch.reshape(val_clean_image, (CROP_SIZE, CROP_SIZE)))
+                    
                     val_outputs = u_i_net(val_noisy_image)
                     val_loss += u_k_criterion(val_outputs, val_clean_image).item()
-                    val_ssim += find_ssim(val_clean_image, val_outputs)
-                    val_psnr += find_psnr(val_clean_image, val_outputs)
+                    val_ssim += find_ssim(val_outputs, val_clean_image)
+                    val_psnr += find_psnr(val_outputs, val_clean_image)
 
             val_loss /= n_samples_val
             val_ssim /= n_samples_val

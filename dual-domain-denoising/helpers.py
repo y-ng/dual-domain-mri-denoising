@@ -59,13 +59,13 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
 
 
 # function to calculate structural similarity b/w two images
-def find_ssim(image, prediction):
+def find_ssim(predicted, target):
     metric = StructuralSimilarityIndexMeasure()
-    return metric(prediction, image)
+    return metric(predicted, target)
 
 
 # function to calculate peak signal-to-noise ratio of an image
-def find_psnr(image, prediction):
+def find_psnr(predicted, target):
     metric = PeakSignalNoiseRatio()
-    return metric(prediction, image)
+    return metric(predicted, target)
 
