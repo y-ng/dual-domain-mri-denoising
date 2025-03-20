@@ -78,10 +78,10 @@ def main():
     )
     kdata_val_loader = DataLoader(kdata_val_data, batch_size=1)
     
-    num_iters = 1 # num_epochs = num_iters * 5 * 2
+    num_iters = 2 # num_epochs = num_iters * 5 * 2
 
-    u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
-    u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-4)
+    u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-3)
+    u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-3)
     u_k_criterion = nn.HuberLoss()
     u_i_criterion = nn.HuberLoss()
 
@@ -96,7 +96,7 @@ def main():
         
         # training for u_k_net
         for i in range(5):
-            print(f'Epoch {(i + 1) * (iter + 1)}/{num_iters * 5} for U_k')
+            print(f'Epoch {iter * 5 + i + 1}/{num_iters * 5} for U_k')
             u_k_net.train()
 
             epoch_loss = 0
@@ -153,7 +153,7 @@ def main():
         
         # training for u_i_net
         for i in range(5):
-            print(f'Epoch {(i + 1) * (iter + 1)}/{num_iters * 5} for U_i')
+            print(f'Epoch {iter * 5 + i + 1}/{num_iters * 5} for U_i')
             u_i_net.train()
 
             epoch_loss = 0

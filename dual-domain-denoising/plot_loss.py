@@ -55,6 +55,7 @@ def main():
     ax2 = ax1.twinx()
     ax2.plot(u_i_val_psnr, 'k--', label='PSNR')
     ax2.set_ylabel('Peak Signal-to-Noise Ratio')
+    plt.legend()
     plt.tight_layout()
     fig.savefig(os.path.join(OUTPUT_FOLDER, 'val_metrics.png'))
     plt.close()
