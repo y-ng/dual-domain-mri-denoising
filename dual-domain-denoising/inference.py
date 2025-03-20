@@ -55,9 +55,12 @@ def main():
             u_k_net_in = torch.stack([kspace_real.to(torch.float32), kspace_imag.to(torch.float32)], dim=1)
             
             # run inference for kspace module
+            u_k_net_in = u_k_net_in.to(device)
             with torch.no_grad():
                 u_k_net_out = u_k_net_load(u_k_net_in)
             
+            u_k_net_out = u_k_net_out.to(CPU)
+
             complex_output = u_k_net_out[:, 0, :, :] + 1j * u_k_net_out[:, 1, :, :]
             u_i_net_in = torch.reshape(kspace_to_image(complex_output), (n_channels, 1, CROP_SIZE, CROP_SIZE))
 
@@ -69,10 +72,12 @@ def main():
             """
 
             # run inference for image module
-            u_i_net_out = u_i_net_in
+            u_i_net_in = u_i_net_in.to(device)
             with torch.no_grad():
                 u_i_net_out = u_i_net_load(u_i_net_in)
 
+            u_i_net_out = u_i_net_out.to(CPU)
+            
             # combine multicoil data with root-sum-of-squares recon
             clean_image_rss = torch.reshape(fastmri.rss(u_i_net_out, dim=0), shape=(CROP_SIZE, CROP_SIZE))
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)

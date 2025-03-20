@@ -51,8 +51,8 @@ def kspace_to_image(kdata):
 # function to compare clean vs noisy reconstructed images
 def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
     fig, axs = plt.subplots(1, 2)
-    axs[0].imshow(np.abs(clean_image.numpy()), cmap='gray')
-    axs[1].imshow(np.abs(noisy_image.numpy()), cmap='gray')
+    axs[0].imshow(np.abs(noisy_image.numpy()), cmap='gray')
+    axs[1].imshow(np.abs(clean_image.numpy()), cmap='gray')
     plt.tight_layout()
 
     if path:

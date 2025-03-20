@@ -16,19 +16,19 @@ def main():
     # load pkl data
     print('Read in data from files...')
     with open(NOISY_KDATA_PATH, 'rb') as handle:
-        noisy_kdata = pk.load(handle)[0:10]
+        noisy_kdata = pk.load(handle)
         print(noisy_kdata.dtype, noisy_kdata.shape)
 
     with open(CLEAN_KDATA_PATH, 'rb') as handle:
-        clean_kdata = pk.load(handle)[0:10]
+        clean_kdata = pk.load(handle)
         print(clean_kdata.dtype, clean_kdata.shape)
 
     with open(NOISY_KDATA_VAL, 'rb') as handle:
-        noisy_kdata_val = pk.load(handle)[10:12]
+        noisy_kdata_val = pk.load(handle)
         print(noisy_kdata_val.dtype, noisy_kdata_val.shape)
 
     with open(CLEAN_KDATA_VAL, 'rb') as handle:
-        clean_kdata_val = pk.load(handle)[10:12]
+        clean_kdata_val = pk.load(handle)
         print(clean_kdata_val.dtype, clean_kdata_val.shape)
         
 
@@ -105,9 +105,25 @@ def main():
             for noisy_kspace, clean_kspace in kdata_train_loader:
                 step += 1
 
+                """
+                # check if inputs look correct
+                noisy_test = noisy_kspace[0, 0, :, :] + 1j * noisy_kspace[0, 1, :, :]
+                clean_test = clean_kspace[0, 0, :, :] + 1j * clean_kspace[0, 1, :, :]
+                plot_noisy_vs_clean(np.log(np.abs(noisy_test) + 1e-9), np.log(np.abs(clean_test) + 1e-9))
+                plot_noisy_vs_clean(kspace_to_image(noisy_test), kspace_to_image(clean_test))
+                """
+
                 noisy_kspace, clean_kspace = noisy_kspace.to(device), clean_kspace.to(device)
                 u_k_net_outputs = u_k_net(noisy_kspace)
                 u_k_net_loss = u_k_criterion(u_k_net_outputs, clean_kspace)
+
+                """
+                # check u_k_net output
+                noisy_test = u_k_net_outputs.to(CPU)[0, 0, :, :] + 1j * u_k_net_outputs.to(CPU)[0, 1, :, :]
+                clean_test = clean_kspace.to(CPU)[0, 0, :, :] + 1j * clean_kspace.to(CPU)[0, 1, :, :]
+                plot_noisy_vs_clean(np.log(np.abs(noisy_test.detach()) + 1e-9), np.log(np.abs(clean_test.detach()) + 1e-9))
+                plot_noisy_vs_clean(kspace_to_image(noisy_test.detach()), kspace_to_image(clean_test.detach()))
+                """
 
                 # update weights
                 u_k_optimizer.zero_grad()
@@ -159,10 +175,21 @@ def main():
                 clean_complex = clean_kspace[:, 0, :, :] + 1j * clean_kspace[:, 1, :, :]
                 clean_complex = clean_complex.to(CPU)
                 clean_image = torch.reshape(kspace_to_image(clean_complex), (clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
+
+                """
+                # check input to u_i_net
+                plot_noisy_vs_clean(noisy_image[0, 0].detach(), clean_image[0, 0].detach())
+                """
+
                 noisy_image, clean_image = noisy_image.to(device), clean_image.to(device)
                 
                 u_i_net_outputs = u_i_net(noisy_image)
                 u_i_net_loss = u_i_criterion(u_i_net_outputs, clean_image)
+
+                """
+                # check output of u_i_net
+                plot_noisy_vs_clean(u_i_net_outputs.to(CPU)[0, 0].detach(), clean_image.to(CPU)[0, 0].detach())
+                """
 
                 # update weights
                 u_i_optimizer.zero_grad()
@@ -190,8 +217,6 @@ def main():
                     val_clean_complex = clean_val[:, 0, :, :] + 1j * clean_val[:, 1, :, :]
                     val_clean_complex = val_clean_complex.to(CPU)
                     val_clean_image = torch.reshape(kspace_to_image(val_clean_complex), (val_clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
-                
-                    plot_noisy_vs_clean(torch.reshape(val_noisy_image, (CROP_SIZE, CROP_SIZE)), torch.reshape(val_clean_image, (CROP_SIZE, CROP_SIZE)))
 
                     val_noisy_image, val_clean_image = val_noisy_image.to(device), val_clean_image.to(device)
                     
