@@ -12,7 +12,7 @@ np.random.seed(SEED)
 def main():
     
     noisy_kdata, clean_kdata = None, None
-    noisy_image, clean_image = None, None
+    # noisy_image, clean_image = None, None
     
     for i, file in enumerate(FILES_TRAIN):
         print(f'Processing file {i + 1} / {len(FILES_TRAIN)}...')
@@ -31,8 +31,8 @@ def main():
         if noisy_kdata is None:
             noisy_kdata = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
             clean_kdata = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
-            noisy_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
-            clean_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
+            # noisy_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
+            # clean_image = np.empty(shape=(0, CROP_SIZE, CROP_SIZE))
 
         # select each slice in a volume
         for n_slice in range(n_slices):
@@ -51,22 +51,18 @@ def main():
             """
             show_coils(np.log(np.abs(clean_kspace) + 1e-9), [0, 1, 2, 3])
             show_coils(np.log(np.abs(noisy_kspace) + 1e-9), [0, 1, 2, 3])
-            """
 
             # absolute value of img from kspace 
             clean_image_abs = kspace_to_image(clean_kspace)
             noisy_image_abs = kspace_to_image(noisy_kspace)
 
-            """
             show_coils(clean_image_abs, [0, 1, 2, 3], cmap='gray')
             show_coils(noisy_image_abs, [0, 1, 2, 3], cmap='gray')
-            """
 
             # track image data for training
             clean_image = np.concatenate((clean_image, clean_image_abs), axis=0)
             noisy_image = np.concatenate((noisy_image, noisy_image_abs), axis=0)
             
-            """
             # combine multicoil data with root-sum-of-squares recon
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
             clean_image_rss = fastmri.rss(clean_image_abs, dim=0)
@@ -80,12 +76,6 @@ def main():
 
     with open(CLEAN_KDATA_PATH, 'wb') as handle:
         pk.dump(clean_kdata, handle, protocol=pk.HIGHEST_PROTOCOL)
-
-    with open(NOISY_IMAGE_PATH, 'wb') as handle:
-        pk.dump(noisy_image, handle, protocol=pk.HIGHEST_PROTOCOL)
-
-    with open(CLEAN_IMAGE_PATH, 'wb') as handle:
-        pk.dump(clean_image, handle, protocol=pk.HIGHEST_PROTOCOL)
     
     print('Done.')
 

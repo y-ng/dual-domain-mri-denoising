@@ -41,7 +41,7 @@ def main():
     print(f'Image size: {height_val}x{width_val}')
 
     # set up model
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device(CUDA if torch.cuda.is_available() else CPU)
     print(f'Device: {device}')
 
     u_k_net = UNet_kdata()
@@ -102,10 +102,10 @@ def main():
             epoch_loss = 0
             step = 0
 
-            for data in kdata_train_loader:
+            for noisy_kspace, clean_kspace in kdata_train_loader:
                 step += 1
 
-                noisy_kspace, clean_kspace = data[0].to(device), data[1].to(device)
+                noisy_kspace, clean_kspace = noisy_kspace.to(device), clean_kspace.to(device)
                 u_k_net_outputs = u_k_net(noisy_kspace)
                 u_k_net_loss = u_k_criterion(u_k_net_outputs, clean_kspace)
 
@@ -125,8 +125,8 @@ def main():
             u_k_net.eval()
             val_loss = 0
             with torch.no_grad():
-                for val_data in kdata_val_loader:
-                    noisy_val, clean_val = val_data[0].to(device), val_data[1].to(device)
+                for noisy_val, clean_val in kdata_val_loader:
+                    noisy_val, clean_val = noisy_val.to(device), clean_val.to(device)
                     val_outputs = u_k_net(noisy_val)
                     val_loss += u_k_criterion(val_outputs, clean_val).item()
 
@@ -143,10 +143,10 @@ def main():
             epoch_loss = 0
             step = 0
 
-            for data in kdata_train_loader:
+            for noisy_kspace, clean_kspace in kdata_train_loader:
                 step += 1
 
-                noisy_kspace, clean_kspace = data[0].to(device), data[1].to(device)
+                noisy_kspace, clean_kspace = noisy_kspace.to(device), clean_kspace.to(device)
                 
                 u_k_net.eval()
                 with torch.no_grad():
@@ -154,9 +154,12 @@ def main():
 
                 # kspace to image conversion
                 noisy_complex = u_k_net_outputs[:, 0, :, :] + 1j * u_k_net_outputs[:, 1, :, :]
+                noisy_complex = noisy_complex.to(CPU)
                 noisy_image = torch.reshape(kspace_to_image(noisy_complex), (noisy_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
                 clean_complex = clean_kspace[:, 0, :, :] + 1j * clean_kspace[:, 1, :, :]
+                clean_complex = clean_complex.to(CPU)
                 clean_image = torch.reshape(kspace_to_image(clean_complex), (clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
+                noisy_image, clean_image = noisy_image.to(device), clean_image.to(device)
                 
                 u_i_net_outputs = u_i_net(noisy_image)
                 u_i_net_loss = u_i_criterion(u_i_net_outputs, clean_image)
@@ -177,16 +180,20 @@ def main():
             u_i_net.eval()
             val_loss, val_ssim, val_psnr = 0, 0, 0
             with torch.no_grad():
-                for val_data in kdata_val_loader:
-                    noisy_val, clean_val = val_data[0].to(device), val_data[1].to(device)
+                for noisy_val, clean_val in kdata_val_loader:
+                    noisy_val, clean_val = noisy_val.to(device), clean_val.to(device)
                     u_k_net_outputs = u_k_net(noisy_val)
 
                     val_noisy_complex = u_k_net_outputs[:, 0, :, :] + 1j * u_k_net_outputs[:, 1, :, :]
+                    val_noisy_complex = val_noisy_complex.to(CPU)
                     val_noisy_image = torch.reshape(kspace_to_image(val_noisy_complex), (val_noisy_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
                     val_clean_complex = clean_val[:, 0, :, :] + 1j * clean_val[:, 1, :, :]
+                    val_clean_complex = val_clean_complex.to(CPU)
                     val_clean_image = torch.reshape(kspace_to_image(val_clean_complex), (val_clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
                 
-                    #plot_noisy_vs_clean(torch.reshape(val_noisy_image, (CROP_SIZE, CROP_SIZE)), torch.reshape(val_clean_image, (CROP_SIZE, CROP_SIZE)))
+                    plot_noisy_vs_clean(torch.reshape(val_noisy_image, (CROP_SIZE, CROP_SIZE)), torch.reshape(val_clean_image, (CROP_SIZE, CROP_SIZE)))
+
+                    val_noisy_image, val_clean_image = val_noisy_image.to(device), val_clean_image.to(device)
                     
                     val_outputs = u_i_net(val_noisy_image)
                     val_loss += u_k_criterion(val_outputs, val_clean_image).item()

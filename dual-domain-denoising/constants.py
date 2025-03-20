@@ -1,16 +1,17 @@
 import os
 import numpy as np 
 
+CPU = 'cpu'
+CUDA = 'cuda:0'
+
 # path for input and output data
 TRAIN_FOLDER = './dual-domain-denoising/training_data'
 OUTPUT_FOLDER = './dual-domain-denoising/outputs'
 DATA_FOLDER = './data'
 
-# paths for noisy/clean kspace/image data
+# paths for noisy/clean kspace data
 NOISY_KDATA_PATH = os.path.join(TRAIN_FOLDER, 'noisy_train_kdata.pkl')
 CLEAN_KDATA_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_kdata.pkl')
-NOISY_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'noisy_train_image.pkl')
-CLEAN_IMAGE_PATH = os.path.join(TRAIN_FOLDER, 'clean_train_image.pkl')
 
 NOISY_KDATA_VAL = os.path.join(TRAIN_FOLDER, 'noisy_val_kdata.pkl')
 CLEAN_KDATA_VAL = os.path.join(TRAIN_FOLDER, 'clean_val_kdata.pkl')

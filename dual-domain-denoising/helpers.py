@@ -1,11 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import fastmri
+import torch
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 from fastmri.data import transforms
 from constants import *
 
 np.random.seed(SEED)
+
+device = torch.device(CUDA if torch.cuda.is_available() else CPU)
+print(f'Device: {device}')
 
 # function to crop k-space for lower resolution image
 def crop_kspace(volume_kspace, size):
@@ -60,12 +64,12 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
 
 # function to calculate structural similarity b/w two images
 def find_ssim(predicted, target):
-    metric = StructuralSimilarityIndexMeasure()
+    metric = StructuralSimilarityIndexMeasure().to(device)
     return metric(predicted, target)
 
 
 # function to calculate peak signal-to-noise ratio of an image
 def find_psnr(predicted, target):
-    metric = PeakSignalNoiseRatio()
+    metric = PeakSignalNoiseRatio().to(device)
     return metric(predicted, target)
 

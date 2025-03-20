@@ -16,7 +16,7 @@ torch.manual_seed(SEED)
 def main():
     # load saved pytorch models for inference
     print('Loading models...')
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device(CUDA if torch.cuda.is_available() else CPU)
     print(f'Device: {device}')
 
     u_k_net_load = UNet_kdata()
