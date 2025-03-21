@@ -5,7 +5,7 @@ import pickle as pk
 import fastmri
 from fastmri.data import transforms
 from constants import *
-from helpers import crop_kspace, show_coils, kspace_to_image, plot_noisy_vs_clean
+from helpers import crop_kspace, show_coils, kspace_to_image, plot_noisy_vs_clean, normalize_kspace
 
 np.random.seed(SEED)
 
@@ -26,6 +26,7 @@ def main():
         print(n_slices, n_channels)
 
         volume_kspace = crop_kspace(volume_kspace, CROP_SIZE)
+        volume_kspace = normalize_kspace(volume_kspace)
 
         # assign empty arrays if first file
         if noisy_kdata is None:

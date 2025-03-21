@@ -25,7 +25,7 @@ MODEL_LOSS_PATH = os.path.join(OUTPUT_FOLDER, 'model_loss.pkl')
 SEED = 42
 
 # noise levels for additive kspace noise
-NOISE_LEVELS = np.linspace(1e-5, 5e-5, 9)
+NOISE_LEVELS = np.linspace(1e-3, 5e-3, 9)
 
 # input image size
 CROP_SIZE = 256

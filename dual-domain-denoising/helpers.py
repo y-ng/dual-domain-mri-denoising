@@ -21,6 +21,25 @@ def crop_kspace(volume_kspace, size):
     return volume_kspace
 
 
+# function to normalize k-space
+def normalize_kspace(kspace):
+    """
+    real = np.real(kspace)
+    imag = np.imag(kspace)
+
+    real = (real - np.mean(real)) / np.std(real)
+    imag = (imag - np.mean(imag)) / np.std(imag)
+
+    return real + 1j * imag
+    """
+
+    abs = np.abs(kspace)
+    norm = abs / np.max(abs)
+    rads = np.angle(kspace)
+
+    return (norm * np.cos(rads)) + 1j * (norm * np.sin(rads))
+
+
 # function to plot absolute value of kspace
 def show_coils(data, slice_nums, cmap=None, path=None):
     fig = plt.figure()
