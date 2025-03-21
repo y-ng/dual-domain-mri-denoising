@@ -86,7 +86,7 @@ def main():
             # save plot
             folder_path = os.path.join(OUTPUT_FOLDER, Path(file).stem)
             os.makedirs(folder_path, exist_ok=True)
-            plot_noisy_vs_clean(clean_image_rss, noisy_image_rss, path=os.path.join(folder_path, f's{n_slice}.png'))
+            plot_noisy_vs_clean(noisy_image_rss, clean_image_rss, path=os.path.join(folder_path, f's{n_slice}.png'))
 
     
     print('Done.')
