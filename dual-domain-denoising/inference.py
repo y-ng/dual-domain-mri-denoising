@@ -8,7 +8,7 @@ from fastmri.data import transforms
 from pathlib import Path
 from constants import *
 from models import UNet_kdata, UNet_image
-from helpers import crop_kspace, kspace_to_image, plot_noisy_vs_clean, show_coils
+from helpers import crop_kspace, kspace_to_image, plot_noisy_vs_clean, show_coils, normalize_kspace
 
 np.random.seed(SEED)
 torch.manual_seed(SEED)
@@ -38,6 +38,7 @@ def main():
         volume_kspace = hf['kspace'][()]
         (n_slices, n_channels, height, width) = volume_kspace.shape
         volume_kspace = crop_kspace(volume_kspace, CROP_SIZE)
+        volume_kspace = normalize_kspace(volume_kspace)
 
         for n_slice in range(n_slices):
             print(f'Slice {n_slice + 1}/{n_slices}.')
