@@ -336,10 +336,10 @@ class UNet_image(nn.Module):
 
 def main():
     model_k = UNet_kdata()
-    summary(model_k, (2, 64, 64))
+    summary(model_k, (2, 256, 256))
 
     model_i = UNet_image()
-    summary(model_i, (1, 64, 64))
+    summary(model_i, (1, 256, 256))
 
 
 if __name__ == '__main__':

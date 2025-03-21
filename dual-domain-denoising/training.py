@@ -78,12 +78,12 @@ def main():
     )
     kdata_val_loader = DataLoader(kdata_val_data, batch_size=1)
     
-    num_iters = 2 # num_epochs = num_iters * 5 * 2
+    num_iters = 10 # num_epochs = num_iters * 5 * 2
 
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-3)
     u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-3)
-    u_k_criterion = nn.HuberLoss()
-    u_i_criterion = nn.HuberLoss()
+    u_k_criterion = nn.MSELoss()
+    u_i_criterion = nn.MSELoss()
 
     u_k_epoch_loss, u_k_step_loss = [], []
     u_k_val_loss = []
