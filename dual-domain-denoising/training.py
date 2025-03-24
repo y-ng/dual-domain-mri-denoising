@@ -78,25 +78,26 @@ def main():
     )
     kdata_val_loader = DataLoader(kdata_val_data, batch_size=1)
     
-    num_iters = 10 # num_epochs = num_iters * 5 * 2
+    epochs_per_iter = 50
+    num_iters = 1 # num_epochs = num_iters * epochs_per_iter (* 2 models)
 
-    u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-3)
-    u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-3)
-    u_k_criterion = nn.MSELoss()
-    u_i_criterion = nn.MSELoss()
+    u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
+    u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-4)
+    u_k_criterion = nn.HuberLoss()
+    u_i_criterion = nn.HuberLoss()
 
     u_k_epoch_loss, u_k_step_loss = [], []
     u_k_val_loss = []
     u_i_epoch_loss, u_i_step_loss = [], []
     u_i_val_loss, u_i_val_ssim, u_i_val_psnr = [], [], []
 
-    # train model (5 epochs for u_k + 5 epochs for u_i / iter)
+    # train model (n epochs for u_k + n epochs for u_i / iter)
     for iter in range(num_iters):
         print(f'Iteration {iter + 1}/{num_iters}')
         
         # training for u_k_net
-        for i in range(5):
-            print(f'Epoch {iter * 5 + i + 1}/{num_iters * 5} for U_k')
+        for i in range(epochs_per_iter):
+            print(f'Epoch {iter * epochs_per_iter + i + 1}/{num_iters * epochs_per_iter} for U_k')
             u_k_net.train()
 
             epoch_loss = 0
@@ -152,8 +153,8 @@ def main():
         
         
         # training for u_i_net
-        for i in range(5):
-            print(f'Epoch {iter * 5 + i + 1}/{num_iters * 5} for U_i')
+        for i in range(epochs_per_iter):
+            print(f'Epoch {iter * epochs_per_iter + i + 1}/{num_iters * epochs_per_iter} for U_i')
             u_i_net.train()
 
             epoch_loss = 0
