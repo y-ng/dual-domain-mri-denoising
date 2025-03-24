@@ -83,6 +83,10 @@ def main():
 
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
     u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-4)
+
+    # TODO: try training more (if doesn't work, try method below)
+    # reduction none --> mask to weigh centre more
+    # could also be that noise is too easy for model to learn
     u_k_criterion = nn.HuberLoss()
     u_i_criterion = nn.HuberLoss()
 
@@ -237,8 +241,8 @@ def main():
 
     # save final models
     print('Saving models and training outputs...')
-    u_k_net.to('cpu')
-    u_i_net.to('cpu')
+    u_k_net.to(CPU)
+    u_i_net.to(CPU)
     torch.save(u_k_net.state_dict(), U_K_MODEL_PATH)
     torch.save(u_i_net.state_dict(), U_I_MODEL_PATH)
     with open(MODEL_LOSS_PATH, 'wb') as handle:

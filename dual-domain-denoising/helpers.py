@@ -72,6 +72,9 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
     fig, axs = plt.subplots(1, 2)
     axs[0].imshow(np.abs(noisy_image.numpy()), cmap='gray')
     axs[1].imshow(np.abs(clean_image.numpy()), cmap='gray')
+
+    # TODO: add scale to image (e.g., how much is a mm)
+    # ITK snap for visualization --> images currently too dark
     plt.tight_layout()
 
     if path:
