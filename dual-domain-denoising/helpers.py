@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import fastmri
 import torch
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
@@ -69,11 +70,31 @@ def kspace_to_image(kdata):
 
 # function to compare clean vs noisy reconstructed images
 def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
-    fig, axs = plt.subplots(1, 2)
-    axs[0].imshow(np.abs(noisy_image.numpy()), cmap='gray')
-    axs[1].imshow(np.abs(clean_image.numpy()), cmap='gray')
+    fig, axs = plt.subplots(2, 2)
 
-    # TODO: add scale to image (e.g., how much is a mm)
+    # plot full image
+    axs[0, 0].imshow(np.abs(noisy_image.numpy()), cmap='gray')
+    axs[0, 0].add_patch(patches.Rectangle(
+        (BOX_X, BOX_Y), BOX_SIZE, BOX_SIZE, linewidth=1, edgecolor='r', facecolor='none'
+    ))
+    axs[0, 0].set_xticks([])
+    axs[0, 0].set_yticks([])
+    axs[0, 1].imshow(np.abs(clean_image.numpy()), cmap='gray')
+    axs[0, 1].add_patch(patches.Rectangle(
+        (BOX_X, BOX_Y), BOX_SIZE, BOX_SIZE, linewidth=1, edgecolor='r', facecolor='none'
+    ))
+    axs[0, 1].set_xticks([])
+    axs[0, 1].set_yticks([])
+
+    # plot zoomed image
+    axs[1, 0].imshow(np.abs(noisy_image.numpy())[BOX_X:(BOX_X + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
+    axs[1, 0].set_xticks([])
+    axs[1, 0].set_yticks([])
+    axs[1, 1].imshow(np.abs(clean_image.numpy())[BOX_X:(BOX_X + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
+    axs[1, 1].set_xticks([])
+    axs[1, 1].set_yticks([])
+
+    # TODO: add scale to image (e.g., how much is a mm) https://pypi.org/project/matplotlib-scalebar/ 
     # ITK snap for visualization --> images currently too dark
     plt.tight_layout()
 
