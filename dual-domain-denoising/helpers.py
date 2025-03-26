@@ -42,11 +42,14 @@ def normalize_kspace(kspace):
 
 
 # function to plot absolute value of kspace
-def show_coils(data, slice_nums, cmap=None, path=None):
+def show_coils(data, coil_nums, cmap=None, path=None):
     fig = plt.figure()
-    for i, num in enumerate(slice_nums):
-        plt.subplot(1, len(slice_nums), i+1)
+    for i, num in enumerate(coil_nums):
+        plt.subplot(1, len(coil_nums), i+1)
         plt.imshow(data[num], cmap=cmap)
+        plt.xticks([])
+        plt.yticks([])
+        plt.title(f'C{num}')
     plt.tight_layout()
 
     if path:
