@@ -30,6 +30,10 @@ NOISE_LEVELS = np.linspace(1e-3, 5e-3, 9)
 # input image size
 CROP_SIZE = 256
 
+# for plotting
+BOX_SIZE = 64
+BOX_X, BOX_Y = 150, 50
+
 # files names for train/val/test
 FILES_TRAIN = [
     'file_brain_AXT1_201_6002717.h5',

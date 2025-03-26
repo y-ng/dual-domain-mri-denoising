@@ -87,10 +87,10 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
     axs[0, 1].set_yticks([])
 
     # plot zoomed image
-    axs[1, 0].imshow(np.abs(noisy_image.numpy())[BOX_X:(BOX_X + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
+    axs[1, 0].imshow(np.abs(noisy_image.numpy())[BOX_Y:(BOX_Y + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
     axs[1, 0].set_xticks([])
     axs[1, 0].set_yticks([])
-    axs[1, 1].imshow(np.abs(clean_image.numpy())[BOX_X:(BOX_X + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
+    axs[1, 1].imshow(np.abs(clean_image.numpy())[BOX_Y:(BOX_Y + BOX_SIZE), BOX_X:(BOX_X + BOX_SIZE)], cmap='gray')
     axs[1, 1].set_xticks([])
     axs[1, 1].set_yticks([])
 

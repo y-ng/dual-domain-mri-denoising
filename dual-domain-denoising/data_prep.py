@@ -37,38 +37,40 @@ def main():
 
         # select each slice in a volume
         for n_slice in range(n_slices):
-            clean_kspace = volume_kspace[n_slice]
+            for n_rot in range(4):
+                # augmentation by rotating 0/90/180/270 degrees counter clockwise
+                clean_kspace = np.rot90(volume_kspace[n_slice], n_rot, (1, 2))
 
-            # add noise to kspace channels
-            noisy_kspace = clean_kspace.copy()
-            for n_channel in range(n_channels):
-                noise_level = np.random.choice(NOISE_LEVELS)
-                noisy_kspace[n_channel] += np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE)) + 1j * np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE))
+                # add noise to kspace channels
+                noisy_kspace = clean_kspace.copy()
+                for n_channel in range(n_channels):
+                    noise_level = np.random.choice(NOISE_LEVELS)
+                    noisy_kspace[n_channel] += np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE)) + 1j * np.random.normal(0, noise_level, size=(CROP_SIZE, CROP_SIZE))
 
-            # track kspace data for training
-            noisy_kdata = np.concatenate((noisy_kdata, noisy_kspace), axis=0)
-            clean_kdata = np.concatenate((clean_kdata, clean_kspace), axis=0)
+                # track kspace data for training
+                noisy_kdata = np.concatenate((noisy_kdata, noisy_kspace), axis=0)
+                clean_kdata = np.concatenate((clean_kdata, clean_kspace), axis=0)
 
-            """
-            show_coils(np.log(np.abs(clean_kspace) + 1e-9), [0, 1, 2, 3])
-            show_coils(np.log(np.abs(noisy_kspace) + 1e-9), [0, 1, 2, 3])
+                """
+                show_coils(np.log(np.abs(clean_kspace) + 1e-9), [0, 1, 2, 3])
+                show_coils(np.log(np.abs(noisy_kspace) + 1e-9), [0, 1, 2, 3])
 
-            # absolute value of img from kspace 
-            clean_image_abs = kspace_to_image(clean_kspace)
-            noisy_image_abs = kspace_to_image(noisy_kspace)
+                # absolute value of img from kspace 
+                clean_image_abs = kspace_to_image(clean_kspace)
+                noisy_image_abs = kspace_to_image(noisy_kspace)
 
-            show_coils(clean_image_abs, [0, 1, 2, 3], cmap='gray')
-            show_coils(noisy_image_abs, [0, 1, 2, 3], cmap='gray')
+                show_coils(clean_image_abs, [0, 1, 2, 3], cmap='gray')
+                show_coils(noisy_image_abs, [0, 1, 2, 3], cmap='gray')
 
-            # track image data for training
-            clean_image = np.concatenate((clean_image, clean_image_abs), axis=0)
-            noisy_image = np.concatenate((noisy_image, noisy_image_abs), axis=0)
-            
-            # combine multicoil data with root-sum-of-squares recon
-            noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
-            clean_image_rss = fastmri.rss(clean_image_abs, dim=0)
-            plot_noisy_vs_clean(noisy_image_rss, clean_image_rss)
-            """
+                # track image data for training
+                # clean_image = np.concatenate((clean_image, clean_image_abs), axis=0)
+                # noisy_image = np.concatenate((noisy_image, noisy_image_abs), axis=0)
+                
+                # combine multicoil data with root-sum-of-squares recon
+                noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
+                clean_image_rss = fastmri.rss(clean_image_abs, dim=0)
+                plot_noisy_vs_clean(noisy_image_rss, clean_image_rss)
+                """
 
     # writing all training data to pkl 
     print('Writing data to files...')
