@@ -78,7 +78,7 @@ def main():
     )
     kdata_val_loader = DataLoader(kdata_val_data, batch_size=1)
     
-    epochs_per_iter = 50
+    epochs_per_iter = 100
     num_iters = 1 # num_epochs = num_iters * epochs_per_iter (* 2 models)
 
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
@@ -181,20 +181,16 @@ def main():
                 clean_complex = clean_complex.to(CPU)
                 clean_image = torch.reshape(kspace_to_image(clean_complex), (clean_complex.shape[0], 1, CROP_SIZE, CROP_SIZE))
 
-                """
                 # check input to u_i_net
-                plot_noisy_vs_clean(noisy_image[0, 0].detach(), clean_image[0, 0].detach())
-                """
+                # plot_noisy_vs_clean(noisy_image[0, 0].detach(), clean_image[0, 0].detach())
 
                 noisy_image, clean_image = noisy_image.to(device), clean_image.to(device)
                 
                 u_i_net_outputs = u_i_net(noisy_image)
                 u_i_net_loss = u_i_criterion(u_i_net_outputs, clean_image)
 
-                """
                 # check output of u_i_net
-                plot_noisy_vs_clean(u_i_net_outputs.to(CPU)[0, 0].detach(), clean_image.to(CPU)[0, 0].detach())
-                """
+                # plot_noisy_vs_clean(u_i_net_outputs.to(CPU)[0, 0].detach(), clean_image.to(CPU)[0, 0].detach())
 
                 # update weights
                 u_i_optimizer.zero_grad()
