@@ -78,7 +78,7 @@ def main():
     )
     kdata_val_loader = DataLoader(kdata_val_data, batch_size=1)
     
-    epochs_per_iter = 100
+    epochs_per_iter = 200
     num_iters = 1 # num_epochs = num_iters * epochs_per_iter (* 2 models)
 
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
@@ -109,6 +109,11 @@ def main():
 
             for noisy_kspace, clean_kspace in kdata_train_loader:
                 step += 1
+
+                # random augmentation by rotating
+                n_rot = np.random.choice(np.arange(4))
+                noisy_kspace = torch.from_numpy(np.rot90(noisy_kspace, n_rot, (2, 3)).copy())
+                clean_kspace = torch.from_numpy(np.rot90(clean_kspace, n_rot, (2, 3)).copy())
 
                 """
                 # check if inputs look correct
@@ -147,6 +152,10 @@ def main():
             val_loss = 0
             with torch.no_grad():
                 for noisy_val, clean_val in kdata_val_loader:
+                    n_rot = np.random.choice(np.arange(4))
+                    noisy_val = torch.from_numpy(np.rot90(noisy_val, n_rot, (2, 3)).copy())
+                    clean_val = torch.from_numpy(np.rot90(clean_val, n_rot, (2, 3)).copy())
+
                     noisy_val, clean_val = noisy_val.to(device), clean_val.to(device)
                     val_outputs = u_k_net(noisy_val)
                     val_loss += u_k_criterion(val_outputs, clean_val).item()
@@ -166,6 +175,10 @@ def main():
 
             for noisy_kspace, clean_kspace in kdata_train_loader:
                 step += 1
+
+                n_rot = np.random.choice(np.arange(4))
+                noisy_kspace = torch.from_numpy(np.rot90(noisy_kspace, n_rot, (2, 3)).copy())
+                clean_kspace = torch.from_numpy(np.rot90(clean_kspace, n_rot, (2, 3)).copy())
 
                 noisy_kspace, clean_kspace = noisy_kspace.to(device), clean_kspace.to(device)
                 
@@ -209,6 +222,10 @@ def main():
             val_loss, val_ssim, val_psnr = 0, 0, 0
             with torch.no_grad():
                 for noisy_val, clean_val in kdata_val_loader:
+                    n_rot = np.random.choice(np.arange(4))
+                    noisy_val = torch.from_numpy(np.rot90(noisy_val, n_rot, (2, 3)).copy())
+                    clean_val = torch.from_numpy(np.rot90(clean_val, n_rot, (2, 3)).copy())
+                    
                     noisy_val, clean_val = noisy_val.to(device), clean_val.to(device)
                     u_k_net_outputs = u_k_net(noisy_val)
 
