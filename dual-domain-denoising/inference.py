@@ -69,6 +69,7 @@ def main():
             if n_slice == 0:
                 show_coils(np.log(np.abs(kspace) + 1e-9), [0, 1, 2, 3])
                 show_coils(np.log(np.abs(complex_output) + 1e-9), [0, 1, 2, 3])
+                # show_coils(np.log(np.abs(complex_output - volume_kspace[n_slice]) + 1e-9), [0, 1, 2, 3])
                 show_coils(kspace_to_image(complex_output), [0, 1, 2, 3], cmap='gray')
             """
 
@@ -81,6 +82,7 @@ def main():
             
             # combine multicoil data with root-sum-of-squares recon
             clean_image_rss = torch.reshape(fastmri.rss(u_i_net_out, dim=0), shape=(CROP_SIZE, CROP_SIZE))
+            # clean_image_rss[128, 128] = clean_image_rss[128, 127]
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
 
             # save plot
