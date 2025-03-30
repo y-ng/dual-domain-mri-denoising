@@ -63,7 +63,9 @@ def main():
             u_k_net_out = u_k_net_out.to(CPU)
 
             complex_output = u_k_net_out[:, 0, :, :] + 1j * u_k_net_out[:, 1, :, :]
-            u_i_net_in = torch.reshape(kspace_to_image(complex_output), (n_channels, 1, CROP_SIZE, CROP_SIZE))
+            image_output = kspace_to_image(complex_output)
+            #image_output[:, 128, 128] = image_output[:, 128, 127]
+            u_i_net_in = torch.reshape(image_output, (n_channels, 1, CROP_SIZE, CROP_SIZE))
 
             """
             if n_slice == 0:
@@ -82,7 +84,6 @@ def main():
             
             # combine multicoil data with root-sum-of-squares recon
             clean_image_rss = torch.reshape(fastmri.rss(u_i_net_out, dim=0), shape=(CROP_SIZE, CROP_SIZE))
-            # clean_image_rss[128, 128] = clean_image_rss[128, 127]
             noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
 
             # save plot
