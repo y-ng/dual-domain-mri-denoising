@@ -84,9 +84,7 @@ def main():
     u_k_optimizer = torch.optim.Adam(u_k_net.parameters(), lr=1e-4)
     u_i_optimizer = torch.optim.Adam(u_i_net.parameters(), lr=1e-4)
 
-    # TODO: try training more (if doesn't work, try method below)
-    # reduction none --> mask to weigh centre more
-    # could also be that noise is too easy for model to learn
+    # TODO: try reduction none --> mask to weigh centre more
     u_k_criterion = nn.HuberLoss()
     u_i_criterion = nn.HuberLoss()
 
@@ -239,7 +237,7 @@ def main():
                     val_noisy_image, val_clean_image = val_noisy_image.to(device), val_clean_image.to(device)
                     
                     val_outputs = u_i_net(val_noisy_image)
-                    val_loss += u_k_criterion(val_outputs, val_clean_image).item()
+                    val_loss += u_i_criterion(val_outputs, val_clean_image).item()
                     val_ssim += find_ssim(val_outputs, val_clean_image)
                     val_psnr += find_psnr(val_outputs, val_clean_image)
 

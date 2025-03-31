@@ -10,7 +10,6 @@ from constants import *
 np.random.seed(SEED)
 
 device = torch.device(CUDA if torch.cuda.is_available() else CPU)
-print(f'Device: {device}')
 
 # function to crop k-space for lower resolution image
 def crop_kspace(volume_kspace, size):
