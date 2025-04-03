@@ -64,7 +64,16 @@ def main():
 
             complex_output = u_k_net_out[:, 0, :, :] + 1j * u_k_net_out[:, 1, :, :]
             image_output = kspace_to_image(complex_output)
-            #image_output[:, 128, 128] = image_output[:, 128, 127]
+            image_output[:, 128, 128] = torch.tensor(np.mean([
+                image_output[0, 128, 127],
+                image_output[0, 128, 129],
+                image_output[0, 127, 128],
+                image_output[0, 129, 128],
+                image_output[0, 127, 127],
+                image_output[0, 127, 129],
+                image_output[0, 129, 127],
+                image_output[0, 129, 129],
+            ]))
             u_i_net_in = torch.reshape(image_output, (n_channels, 1, CROP_SIZE, CROP_SIZE))
 
             """
@@ -81,6 +90,8 @@ def main():
                 u_i_net_out = u_i_net_load(u_i_net_in)
 
             u_i_net_out = u_i_net_out.to(CPU)
+
+            #show_coils(torch.reshape(u_i_net_out, (n_channels, CROP_SIZE, CROP_SIZE)), [0, 1, 2, 3], cmap='gray')
             
             # combine multicoil data with root-sum-of-squares recon
             clean_image_rss = torch.reshape(fastmri.rss(u_i_net_out, dim=0), shape=(CROP_SIZE, CROP_SIZE))

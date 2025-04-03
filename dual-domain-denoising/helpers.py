@@ -9,8 +9,6 @@ from constants import *
 
 np.random.seed(SEED)
 
-device = torch.device(CUDA if torch.cuda.is_available() else CPU)
-
 # function to crop k-space for lower resolution image
 def crop_kspace(volume_kspace, size):
     # sample every other k-space line in x-direction to go from rectangular to square k-space
@@ -109,12 +107,18 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
 
 # function to calculate structural similarity b/w two images
 def find_ssim(predicted, target):
+    device = torch.device(CUDA if torch.cuda.is_available() else CPU)
     metric = StructuralSimilarityIndexMeasure().to(device)
-    return metric(predicted, target).to(CPU)
+    ssim = metric(target, predicted).to(CPU)
+    metric.to(CPU)
+    return ssim
 
 
 # function to calculate peak signal-to-noise ratio of an image
 def find_psnr(predicted, target):
+    device = torch.device(CUDA if torch.cuda.is_available() else CPU)
     metric = PeakSignalNoiseRatio().to(device)
-    return metric(predicted, target).to(CPU)
+    psnr = metric(target, predicted).to(CPU)
+    metric.to(CPU)
+    return psnr
 
