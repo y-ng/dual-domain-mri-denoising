@@ -96,7 +96,7 @@ def main():
     noisy_image_rss = fastmri.rss(noisy_image_abs, dim=0)
 
     fig, axs = plt.subplots(2, 5, figsize=(10, 4))
-    box_x, box_y = BOX_X, BOX_Y
+    box_x, box_y = 45, 90
     axs[0, 0].imshow(np.abs(noisy_image_rss.numpy()), cmap='gray')
     axs[0, 0].add_patch(patches.Rectangle(
         (box_x, box_y), BOX_SIZE, BOX_SIZE, linewidth=1, edgecolor='r', facecolor='none'
