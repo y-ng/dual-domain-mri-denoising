@@ -94,8 +94,6 @@ def plot_noisy_vs_clean(noisy_image, clean_image, path=None):
     axs[1, 1].set_xticks([])
     axs[1, 1].set_yticks([])
 
-    # TODO: add scale to image (e.g., how much is a mm) https://pypi.org/project/matplotlib-scalebar/ 
-    # ITK snap for visualization --> images currently too dark
     plt.tight_layout()
 
     if path:

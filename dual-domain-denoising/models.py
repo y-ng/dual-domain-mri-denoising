@@ -6,7 +6,7 @@ from torchsummary import summary
 
 np.random.seed(SEED)
 
-# Us module in wNet
+# Uk module in wNet (for k-space denoising)
 class UNet_kdata(nn.Module):
     def __init__(self):
         super().__init__()
@@ -186,7 +186,7 @@ class UNet_kdata(nn.Module):
                 nn.init.uniform_(m.bias)
 
 
-# Ui module in wNet
+# Ui module in WNet (for image denoising)
 class UNet_image(nn.Module):
     def __init__(self):
         super().__init__()

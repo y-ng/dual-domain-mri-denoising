@@ -12,6 +12,7 @@ from helpers import crop_kspace, kspace_to_image, normalize_kspace, show_coils
 device = torch.device(CUDA if torch.cuda.is_available() else CPU)
 print(f'Device: {device}')
 
+# function to generate kdm output for the specified module from an appropriate input
 def get_kdm_output(path_to_model, input):
     u_k_net = UNet_kdata()
     u_k_net.load_state_dict(torch.load(os.path.join(OUTPUT_FOLDER, path_to_model), weights_only=True))
@@ -40,6 +41,7 @@ def get_kdm_output(path_to_model, input):
     return torch.reshape(image_output, (input.shape[0], 1, CROP_SIZE, CROP_SIZE))
 
 
+# function to generate ifm output for the specified module from an appropriate input
 def get_idm_output(path_to_model, input):
     u_i_net = UNet_image()
     u_i_net.load_state_dict(torch.load(os.path.join(OUTPUT_FOLDER, path_to_model), weights_only=True))

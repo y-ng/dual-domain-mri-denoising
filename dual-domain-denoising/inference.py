@@ -64,6 +64,7 @@ def main():
 
             complex_output = u_k_net_out[:, 0, :, :] + 1j * u_k_net_out[:, 1, :, :]
             image_output = kspace_to_image(complex_output)
+            # fix centre bright spot in some images
             image_output[:, 128, 128] = torch.tensor(np.mean([
                 image_output[0, 128, 127],
                 image_output[0, 128, 129],
