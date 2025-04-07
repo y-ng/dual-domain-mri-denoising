@@ -1,10 +1,12 @@
 # dual-domain-mri-denoising
 
-Benefits such as greater accessibility and decreased costs of lower-field magnets in magnetic resonance imaging have increased the use of low-field scanners. However, a challenge that must be addressed to produce clinically useful images is the noise and lack of signal associated with decreased magnetic field strengths. Dual-domain neural networks, such as WNet, show promise in medical image denoising. Results of comparing k-space-denoising, image-denoising, and dual-domain denoising model performance on T1-weighted images show best peak signal-to-noise ratio and structural similarity with a stand-alone k-space denoiser. Training on T1-weighted images also provides sufficient denoising with T2-weighted images, supporting model viability with multi-contrast acquisitions. Future experiments should focus on improving preservation of finer structural details in both gray and white brain matter to address issues with blurring artifacts, and validation on more realistic noise sources including radiofrequency bands caused by interference in the scanner environment.
+*Project Title*: A Comparison of Single and Dual-Domain MRI Denoising with WNet
+
+*Abstract*: Benefits such as greater accessibility and decreased costs of lower-field magnets in magnetic resonance imaging have increased the use of low-field scanners. However, a challenge that must be addressed to produce clinically useful images is the noise and lack of signal associated with decreased magnetic field strengths. Dual-domain neural networks, such as WNet, show promise in medical image denoising. Results of comparing k-space-denoising, image-denoising, and dual-domain denoising model performance on T1-weighted images show best peak signal-to-noise ratio and structural similarity with a stand-alone k-space denoiser. Training on T1-weighted images also provides sufficient denoising with T2-weighted images, supporting model viability with multi-contrast acquisitions. Future experiments should focus on improving preservation of finer structural details in both gray and white brain matter to address issues with blurring artifacts, and validation on more realistic noise sources including radiofrequency bands caused by interference in the scanner environment.
 
 *Keywords*: magnetic resonance imaging, image denoising, dual-domain 
 
-Original WNet:
+Original WNet paper:
 - Cheslerean-Boghiu, T., Hofmann, F. C., Schultheiß, M., Pfeiffer, F., Pfeiffer, D., & Lasser, T. (2023). 
 WNet: A Data-Driven Dual-Domain Denoising Model for Sparse-View Computed Tomography With a Trainable Reconstruction Layer. *IEEE Transactions on Computational Imaging, 9*, 120-132. https://doi.org/10.1109/TCI.2023.3240078 
 
